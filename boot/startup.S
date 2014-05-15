@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/* S3C2440.S: Startup file for Samsung S3C440                                */
+/* S3C2440.S: Startup file for Samsung S3C2440                                */
 /*****************************************************************************/
 
 /* Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs     */
