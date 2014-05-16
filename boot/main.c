@@ -1,5 +1,19 @@
+#include "proto.h"
+
 void __main()
 {
-	while(1){}
-		
+
+  wdog_setup();
+  
+  clock_setup();
+
+  memory_setup();
+
+  gpio_setup();
+
+  nand_flash_setup();
+
+
+  while(1){}
+
 };
