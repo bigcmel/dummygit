@@ -25,7 +25,8 @@
 #define GPH_DAT (*(volatile unsigned long*)(GPH_CON + 0x04)) // GPH data register
 #define GPJ_DAT (*(volatile unsigned long*)(GPJ_CON + 0x04)) // GPJ data register
 
-#define GPA_UP (*(volatile unsigned long*)(GPA_CON + 0x08)) // GPA pull-up disable register
+// GPA 没有上拉使能寄存器
+
 #define GPB_UP (*(volatile unsigned long*)(GPB_CON + 0x08)) // GPB pull-up disable register
 #define GPC_UP (*(volatile unsigned long*)(GPC_CON + 0x08)) // GPC pull-up disable register
 #define GPD_UP (*(volatile unsigned long*)(GPD_CON + 0x08)) // GPD pull-up disable register
@@ -38,10 +39,10 @@
 
 /* Values of gpio register */
 
-#define GPACON_Val 0x000003FF
+#define GPACON_Val 0x000003FF // 手册P191，这里相当于将GPA0～GPA9这些引脚作为ADDR0，ADDR16～ADDR24的功能引脚，而不是作为输出引脚
 
 #define GPBCON_Val 0x00000000
-#define GPBUP_Val 0x00000000
+#define GPBUP_Val 0x00000000 // 清0代表使能附加上拉功能到相应端口管脚
 
 #define GPCCON_Val 0x00000000
 #define GPCUP_Val 0x00000000
@@ -67,7 +68,7 @@
 
 /* Function: Setup gpio for S3C2440 */
 
-void gpio_setup()
+void GPIO_init()
 {
   GPA_CON = GPACON_Val;
 

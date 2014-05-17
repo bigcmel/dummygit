@@ -3,15 +3,15 @@
 void __main()
 {
 
-  wdog_setup();
+  WT_init();
   
-  clock_setup();
+  CLK_init();
 
-  memory_setup();
+  MC_init();
 
-  gpio_setup();
+  GPIO_init();
 
-  NF_setup();
+  NF_init();
 
 
   while(1){}

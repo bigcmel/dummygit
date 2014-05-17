@@ -17,18 +17,18 @@
 
 /* Values of clock register */
 
-#define LOCKTIME_Val 0x0FFF0FFF
+#define LOCKTIME_Val 0x0FFF0FFF // 手册P168
 #define MPLLCON_Val 0x00043011
 #define UPLLCON_Val 0x00038021
-#define CLKCON_Val 0x001FFFF0
-#define CLKSLOW_Val 0x00000004
-#define CLKDIVN_Val 0x0000000F
-#define CAMDIVN_Val 0x00000000
+#define CLKCON_Val 0x001FFFF0 // 手册P170
+#define CLKSLOW_Val 0x00000004 // 手册P171
+#define CLKDIVN_Val 0x0000000F // 手册P172
+#define CAMDIVN_Val 0x00000000 // 手册P173
 
 
 /* Function: Setup clock for S3C2440 */
 
-void clock_setup()
+void CLK_init()
 {
   LOCKTIME = LOCKTIME_Val;
   CLK_DIVN = CLKDIVN_Val;

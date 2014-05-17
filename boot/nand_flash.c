@@ -2,7 +2,9 @@
 /* nand_flash.c: nand_flash controller configure file for Samsung S3C2440      */
 /*******************************************************************************/
 
-/* 这里写的代码是以 K9F1208 型号的 Nand Flash 为目标的，若目标 Nand Flash 不为 K9F1208，则不应用本代码 */
+/* 这里写的代码是以 K9F1208 型号的 Nand Flash 为目标的，若目标 Nand Flash 不为 K9F1208，则不应用本代码
+   K9F1208参数：存储空间为64M
+*/
 
 #include "global.h"
 
@@ -28,7 +30,7 @@
 
 /* Values of Nand Flash controller register */
 
-#define NFCONT_Val 0x00000001 // 这里只使能了 nand flash 控制器
+#define NFCONT_Val 0x00000001 // 手册P144，这里只使能了 nand flash 控制器
 
 
 /* 相关参数变量的声明 */
@@ -47,9 +49,9 @@ static int NF_TWRPH1; // 从释放 CLE/ALE 到 nWE/nOE 不活动的时间
 /* Nand Flash Controller 的命令码 */
 
 #define NF_CMD_RST 0xFF // 复位
-#define NF_CMD_RD1 0x00 // 读一个页的main的第一部分
-#define NF_CMD_RD2 0x01 // 读一个页的main的第二部分
-#define NF_CMD_RDS 0x50 // 读一个页的spare部分
+#define NF_CMD_RD1 0x00 // 读一个页的main的第一部分，本质上是将 nand flash 内部指针指向 mian 的第一部分的首部
+#define NF_CMD_RD2 0x01 // 读一个页的main的第二部分，本质上是将 nand flash 内部指针指向 mian 的第二部分的首部
+#define NF_CMD_RDS 0x50 // 读一个页的spare部分，本质上是将 nand flash 内部指针指向 spare 部分的首部
 #define NF_CMD_RDD 0x90 // 读芯片的ID号
 #define NF_CMD_PROG 0x80 // 进入写操作模式
 #define NF_CMD_PROG_END 0x10 // 写结束
@@ -115,7 +117,7 @@ static void NF_Reset()
 
 /* Function: Setup nand_flash controller for S3C2440 */
 
-void NF_setup()
+void NF_init()
 {
   //得到 TACLK，TWRPH0，TWRPH1
   NF_TACLS = 1;
@@ -351,7 +353,7 @@ unsigned int NF_MarkBadBlock(unsigned int block)
 
   NF_nFCE_L();
   NF_CLEAR_RB();
-  NF_CMD( NF_CMD_RDS ); // 从spare开始写
+  NF_CMD( NF_CMD_RDS ); // 将nand_flash内部的指针指向spare的首部
   NF_CMD( NF_CMD_PROG ); // 开始进入写模式
   
   NF_ADDR( 0 ); // 从本页的第一个列（字节）开始写
