@@ -11,7 +11,7 @@ void __main()
 
   gpio_setup();
 
-  nand_flash_setup();
+  NF_setup();
 
 
   while(1){}
