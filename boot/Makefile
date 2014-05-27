@@ -20,7 +20,7 @@ DASMFLAGS	= -D -b binary -m arm
 # This Program
 NANSLBOOT	= boot.bin
 NANSLBOOTELF	= boot.elf
-OBJS		= main.o startup.o clock.o wdog.o memory.o gpio.o nand_flash.o
+OBJS		= main.o startup.o clock.o wdog.o memory.o gpio.o nand_flash.o lcd.o
 DASMOUTPUT	= boot.bin.asm
 
 # All Phony Targets
@@ -68,4 +68,7 @@ gpio.o: gpio.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 nand_flash.o: nand_flash.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+lcd.o: lcd.c
 	$(CC) $(CFLAGS) -o $@ $<

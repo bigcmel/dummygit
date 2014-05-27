@@ -2,13 +2,14 @@
 /* wdog.c: watchdog configure file for Samsung S3C2440                        */
 /*******************************************************************************/
 
+#include "global.h"
 
 /* Define register address about watchdog */
 
-#define WT_BASE (*(volatile unsigned long*)0x53000000) // watchdog timer base address
-#define WT_CON (*(volatile unsigned long*)(WT_BASE + 0x00)) //watchdog timer control register address
-#define WT_DAT (*(volatile unsigned long*)(WT_BASE + 0x04)) //watchdog timer data register address
-#define WT_CNT (*(volatile unsigned long*)(WT_BASE + 0x08)) //watchdog timer count register address
+#define WT_BASE (*(volatile WORD*)0x53000000) // watchdog timer base address
+#define WT_CON (*(volatile WORD*)(WT_BASE + 0x00)) //watchdog timer control register address
+#define WT_DAT (*(volatile WORD*)(WT_BASE + 0x04)) //watchdog timer data register address
+#define WT_CNT (*(volatile WORD*)(WT_BASE + 0x08)) //watchdog timer count register address
 
 
 /* Values of watchdog register */

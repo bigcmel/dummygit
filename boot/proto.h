@@ -32,6 +32,11 @@ extern unsigned int NF_EraseBlock(unsigned int block); // 擦除一个块
 extern unsigned int NF_MarkBadBlock(unsigned int block); // 把一个块标记为坏块
 extern unsigned int NF_IsBadBlock(unsigned int block); // 判断一个块是不是坏块
 
+/* lcd.c: */
+extern void LCD_Init();
+extern void LCD_EnvidOnOff(int onoff);
+extern void LCD_PutPixel(WORD x, WORD y, WORD color);
+extern void LCD_ClearScr(WORD color);
 
 
 #endif

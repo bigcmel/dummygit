@@ -6,23 +6,24 @@
    hy57v561620 参数：(4M * 4Bank * 16bit)，所以一片的存储空间为32MB，寻址矩阵是13行，9列，所以能寻址到4M，由于配了2片，所以可以看成数据总线为32bit， 这样两片的存储空间就是64MB了
  */
 
+#include "global.h"
 
 /* Define register address about memory controller */
 
-#define MC_BASE (*(volatile unsigned long*)0x48000000) // memory controller base address
-#define BWSCON (*(volatile unsigned long*)(MC_BASE + 0x00)) // Bus width and wait status ctrl
-#define BANKCON0 (*(volatile unsigned long*)(MC_BASE + 0x04)) // Bank 0 control register
-#define BANKCON1 (*(volatile unsigned long*)(MC_BASE + 0x08)) // Bank 1 control register
-#define BANKCON2 (*(volatile unsigned long*)(MC_BASE + 0x0C)) // Bank 2 control register
-#define BANKCON3 (*(volatile unsigned long*)(MC_BASE + 0x10)) // Bank 3 control register
-#define BANKCON4 (*(volatile unsigned long*)(MC_BASE + 0x14)) // Bank 4 control register
-#define BANKCON5 (*(volatile unsigned long*)(MC_BASE + 0x18)) // Bank 5 control register
-#define BANKCON6 (*(volatile unsigned long*)(MC_BASE + 0x1C)) // Bank 6 control register
-#define BANKCON7 (*(volatile unsigned long*)(MC_BASE + 0x20)) // Bank 7 control register
-#define REFRESH (*(volatile unsigned long*)(MC_BASE + 0x24)) // SDRAM refresh control register
-#define BANKSIZE (*(volatile unsigned long*)(MC_BASE + 0x28)) // Flexible bank size register
-#define MRSRB6 (*(volatile unsigned long*)(MC_BASE + 0x2C)) // Bank 6 mode register
-#define MRSRB7 (*(volatile unsigned long*)(MC_BASE + 0x30)) // Bank 7 mode register
+#define MC_BASE (*(volatile WORD*)0x48000000) // memory controller base address
+#define BWSCON (*(volatile WORD*)(MC_BASE + 0x00)) // Bus width and wait status ctrl
+#define BANKCON0 (*(volatile WORD*)(MC_BASE + 0x04)) // Bank 0 control register
+#define BANKCON1 (*(volatile WORD*)(MC_BASE + 0x08)) // Bank 1 control register
+#define BANKCON2 (*(volatile WORD*)(MC_BASE + 0x0C)) // Bank 2 control register
+#define BANKCON3 (*(volatile WORD*)(MC_BASE + 0x10)) // Bank 3 control register
+#define BANKCON4 (*(volatile WORD*)(MC_BASE + 0x14)) // Bank 4 control register
+#define BANKCON5 (*(volatile WORD*)(MC_BASE + 0x18)) // Bank 5 control register
+#define BANKCON6 (*(volatile WORD*)(MC_BASE + 0x1C)) // Bank 6 control register
+#define BANKCON7 (*(volatile WORD*)(MC_BASE + 0x20)) // Bank 7 control register
+#define REFRESH (*(volatile WORD*)(MC_BASE + 0x24)) // SDRAM refresh control register
+#define BANKSIZE (*(volatile WORD*)(MC_BASE + 0x28)) // Flexible bank size register
+#define MRSRB6 (*(volatile WORD*)(MC_BASE + 0x2C)) // Bank 6 mode register
+#define MRSRB7 (*(volatile WORD*)(MC_BASE + 0x30)) // Bank 7 mode register
 
 
 /* Values of memory register */

@@ -2,17 +2,18 @@
 /* clock.c: clock configure file for Samsung S3C2440                           */
 /*******************************************************************************/
 
+#include "global.h"
 
 /* Define register address about clock */
 
-#define CLK_BASE (*(volatile unsigned long*)0x4C000000) // clock base address
-#define LOCKTIME (*(volatile unsigned long*)(CLK_BASE + 0x00)) // PLL lock time count register
-#define MPLLCON (*(volatile unsigned long*)(CLK_BASE + 0x04)) // MPLL configuration register
-#define UPLLCON (*(volatile unsigned long*)(CLK_BASE + 0x08)) // UPLL configuration register
-#define CLK_CON (*(volatile unsigned long*)(CLK_BASE + 0x0C)) // clock generator control register
-#define CLK_SLOW (*(volatile unsigned long*)(CLK_BASE + 0x10)) // clock slow control register
-#define CLK_DIVN (*(volatile unsigned long*)(CLK_BASE + 0x14)) // divider control register
-#define CAM_DIVN (*(volatile unsigned long*)(CLK_BASE + 0x18)) // clock divider register
+#define CLK_BASE (*(volatile WORD*)0x4C000000) // clock base address
+#define LOCKTIME (*(volatile WORD*)(CLK_BASE + 0x00)) // PLL lock time count register
+#define MPLLCON (*(volatile WORD*)(CLK_BASE + 0x04)) // MPLL configuration register
+#define UPLLCON (*(volatile WORD*)(CLK_BASE + 0x08)) // UPLL configuration register
+#define CLK_CON (*(volatile WORD*)(CLK_BASE + 0x0C)) // clock generator control register
+#define CLK_SLOW (*(volatile WORD*)(CLK_BASE + 0x10)) // clock slow control register
+#define CLK_DIVN (*(volatile WORD*)(CLK_BASE + 0x14)) // divider control register
+#define CAM_DIVN (*(volatile WORD*)(CLK_BASE + 0x18)) // clock divider register
 
 
 /* Values of clock register */
