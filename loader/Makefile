@@ -1,8 +1,8 @@
-#################################
-# Makefile for Boot of nansl    #
-#################################
+###################################
+# Makefile for Loader of nansl    #
+###################################
 
-ENTRYPOINT	= 0x00000000
+ENTRYPOINT	= 0x33000000
 
 # Programs, flags, etc.
 ARM-TOOLS-PATH	= /home/bigc/Apps/arm-linux-toolchain-4.4.3/bin
@@ -18,35 +18,35 @@ OBJFLAGS	= -O binary -S
 DASMFLAGS	= -D -b binary -m arm
 
 # This Program
-NANSLBOOT	= boot.bin
-NANSLBOOTELF	= boot.elf
+NANSLLOADER	= loader.bin
+NANSLLOADERELF	= loader.elf
 OBJS		= main.o startup.o clock.o wdog.o memory.o gpio.o nand_flash.o lcd.o
-DASMOUTPUT	= boot.bin.asm
+DASMOUTPUT	= loader.bin.asm
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all
 
 # Default starting position
-everything : $(NANSLBOOT)
+everything : $(NANSLLOADER)
 
 all : realclean everything
 
 final : all clean
 
 clean :
-	rm -f $(OBJS) $(DASMOUTPUT) $(NANSLBOOTELF)
+	rm -f $(OBJS) $(DASMOUTPUT) $(NANSLLOADERELF)
 
 realclean :
-	rm -f $(OBJS) $(DASMOUTPUT) $(NANSLBOOTELF) $(NANSLBOOT)
+	rm -f $(OBJS) $(DASMOUTPUT) $(NANSLLOADERELF) $(NANSLLOADER)
 
 disasm :
-	$(DASM) $(DASMFLAGS) $(NANSLBOOT) > $(DASMOUTPUT)
+	$(DASM) $(DASMFLAGS) $(NANSLLOADER) > $(DASMOUTPUT)
 
 # All object dependencies files
-$(NANSLBOOT) : $(NANSLBOOTELF)
+$(NANSLLOADER) : $(NANSLLOADERELF)
 	$(OBJ) $(OBJFLAGS) $< $@
 
-$(NANSLBOOTELF) : $(OBJS)
+$(NANSLLOADERELF) : $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS)
 
 main.o: main.c

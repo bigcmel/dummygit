@@ -200,9 +200,9 @@ Reset_Handler:
 
 	.EXTERN __main
                 LDR     R0, =__main
-                BLX	R0	@ __main函数将返回 loader.bin 的加载地址到 R0
+                BLX	R0	@ __main函数将返回 kernel.bin 的加载地址到 R0
 	
-		MOV	PC, R0	@ 此时跳入 loader
+		MOV	PC, R0	@ 此时跳入 kernel
 
 		B	.
 
