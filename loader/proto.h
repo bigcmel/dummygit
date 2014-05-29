@@ -7,17 +7,6 @@ proto.h: 该文件包含了供源文件调用的函数声明，有了这些声�
 
 #include "global.h"
 
-// wdog.c:
-extern void WT_init();
-
-// clock,c:
-extern void CLK_init();
-
-// gpio.c:
-extern void GPIO_init();
-
-// memory.c:
-extern void MC_init();
 
 /* nand_flash.c:
  注意这里的函数（写，读，擦除，标志坏块）在运行之前全都不检查是否是坏块，

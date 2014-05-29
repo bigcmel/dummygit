@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/* S3C2440.S: Startup file for Samsung S3C2440                                */
+/* S3C2440.S: Startup file for boot.bin of Samsung S3C2440                   */
 /*****************************************************************************/
 
 /* Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs     */
@@ -16,38 +16,16 @@
 	.EQU	F_BIT,	0x40	@ when F bit is set, FIQ is disabled
 
 
-/*----------------------- Stack and Heap Definitions -------------------------*/
+/*----------------------- Stack Definitions ---------------------------------*/
 
-	.EQU	UND_Stack_Size,	0x00000000
 	.EQU	SVC_Stack_Size,	0x00000008
-	.EQU	ABT_Stack_Size,	0x00000000
-	.EQU	FIQ_Stack_Size,	0x00000000
-	.EQU	IRQ_Stack_Size,	0x00000080
-	.EQU	USR_Stack_Size,	0x00000400
-
-	.EQU	ISR_Stack_Size,	(UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + FIQ_Stack_Size + IRQ_Stack_Size)
 
 	.BSS
 	.ALIGN	3
 
 Stack_Mem:
-	.SPACE   USR_Stack_Size
-__initial_sp:
-	.SPACE   ISR_Stack_Size
+	.SPACE   SVC_Stack_Size
 Stack_Top:
-
-
-/* 	Heap Configuration	*/
-
-	.EQU	Heap_Size,	0x00000000
-
-	.BSS
-	.ALIGN	3
-
-__heap_base:
-Heap_Mem:
-	.SPACE   Heap_Size
-__heap_limit:	
 
 
 /*----------------------- Memory Definitions ---------------------------------*/
@@ -81,11 +59,6 @@ Vectors:
 	LDR     PC, IRQ_Addr
 	LDR     PC, FIQ_Addr
 
-	.IFDEF	__RTX
-	.EXTERN  SWI_Handler
-	.EXTERN  IRQ_Handler_RTX
-	.ENDIF
-
 
 Reset_Addr:
 	.WORD     Reset_Handler
@@ -98,37 +71,28 @@ PAbt_Addr:
 DAbt_Addr:
 	.WORD     DAbt_Handler
 	.WORD     0                   @ Reserved Address 
-	.IFDEF	__RTX
-IRQ_Addr:
-	.WORD     IRQ_Handler_RTX
-	.ELSE
 IRQ_Addr:
 	.WORD     IRQ_Handler
-	.ENDIF
 FIQ_Addr:
 	.WORD     FIQ_Handler
 
 	
 Undef_Handler:
 	B       Undef_Handler
-	.IFDEF	__RTX
-	.ELSE
 SWI_Handler:
 	B       SWI_Handler
-	.ENDIF
 PAbt_Handler:
 	B       PAbt_Handler
 DAbt_Handler:
 	B       DAbt_Handler
 IRQ_Handler:
-	.GLOBL  IRQ_Handler
 	B       .
 FIQ_Handler:
 	B       FIQ_Handler
 
 
 /* Reset Handler	*/
-	.GLOBL  Reset_Handler
+
 Reset_Handler:	
 
 @ Copy Exception Vectors to Internal RAM ---------------------------------------
@@ -145,38 +109,6 @@ Reset_Handler:
 
                 LDR     R0, =Stack_Top
 
-@  Enter Undefined Instruction Mode and set its Stack Pointer
-		MOV	R1,	#Mode_UND
-		ORR	R1,	#I_BIT
-		ORR	R1,	#F_BIT
-                MSR     CPSR_c, R1
-                MOV     SP, R0
-                SUB     R0, R0, #UND_Stack_Size
-
-@  Enter Abort Mode and set its Stack Pointer
-                MOV	R1,	#Mode_ABT
-		ORR	R1,	#I_BIT
-		ORR	R1,	#F_BIT
-                MSR     CPSR_c, R1
-                MOV     SP, R0
-                SUB     R0, R0, #ABT_Stack_Size
-
-@  Enter FIQ Mode and set its Stack Pointer
-                MOV	R1,	#Mode_FIQ
-		ORR	R1,	#I_BIT
-		ORR	R1,	#F_BIT
-                MSR     CPSR_c, R1
-                MOV     SP, R0
-                SUB     R0, R0, #FIQ_Stack_Size
-
-@  Enter IRQ Mode and set its Stack Pointer
-		MOV	R1,	#Mode_IRQ
-		ORR	R1,	#I_BIT
-		ORR	R1,	#F_BIT
-                MSR     CPSR_c, R1
-                MOV     SP, R0
-                SUB     R0, R0, #IRQ_Stack_Size
-
 @  Enter Supervisor Mode and set its Stack Pointer
 		MOV	R1,	#Mode_SVC
 		ORR	R1,	#I_BIT
@@ -184,16 +116,6 @@ Reset_Handler:
                 MSR     CPSR_c, R1
                 MOV     SP, R0
                 SUB     R0, R0, #SVC_Stack_Size
-
-@  Enter User Mode and set its Stack Pointer
-                MSR     CPSR_c, #Mode_USR
-                MOV     SP, R0
-                SUB     SL, SP, #USR_Stack_Size
-
-@  Enter User Mode and set its Stack Pointer
-                MSR     CPSR_c, #Mode_USR
-                MOV     SP, R0
-                SUB     SL, SP, #USR_Stack_Size
 
 
 @ Enter the C code -------------------------------------------------------------
@@ -205,19 +127,6 @@ Reset_Handler:
 		MOV	PC, R0	@ 此时跳入 loader
 
 		B	.
-
-@ Get User Initial Stack & Heap Address
-	.TEXT
-	.ARM
-
-	.GLOBL  __user_initial_stackheap
-__user_initial_stackheap:	
-
-                LDR     R0, = Heap_Mem
-                LDR     R1, = (Stack_Mem + USR_Stack_Size)
-                LDR     R2, = (Heap_Mem + Heap_Size)
-                LDR    	R3, = Stack_Mem
-                BX	LR
 
 
 	.END

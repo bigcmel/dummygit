@@ -28,10 +28,7 @@ extern void NF_init();
 extern void NF_GetBlockPageInfo(unsigned int* nf_blocknum, unsigned int* nf_pagepblock,
 				unsigned int* nf_mainsize, unsigned int* nf_sparesize);
 extern WORD NF_CheckId(); // 获取厂商ID和设备ID
-extern unsigned int NF_WritePage(unsigned int block,unsigned int page,BYTE* buffer);
 extern unsigned int NF_ReadPage(unsigned int block,unsigned int page,BYTE* buffer);
-extern unsigned int NF_EraseBlock(unsigned int block); // 擦除一个块
-extern unsigned int NF_MarkBadBlock(unsigned int block); // 把一个块标记为坏块
 extern unsigned int NF_IsBadBlock(unsigned int block); // 判断一个块是不是坏块
 
 /* lcd.c: */

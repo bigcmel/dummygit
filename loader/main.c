@@ -41,6 +41,9 @@ BYTE* __main()
 	}      
     }
 
+
+  LCD_ClearScr( 0x464646 );
+
   
   return (BYTE*)KERNEL_BASE_ADDR;
 };
