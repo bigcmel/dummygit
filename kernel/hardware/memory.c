@@ -6,7 +6,7 @@
    hy57v561620 参数：(4M * 4Bank * 16bit)，所以一片的存储空间为32MB，寻址矩阵是13行，9列，所以能寻址到4M，由于配了2片，所以可以看成数据总线为32bit， 这样两片的存储空间就是64MB了
  */
 
-#include "global.h"
+#include "../include/global.h"
 
 /* Define register address about memory controller */
 

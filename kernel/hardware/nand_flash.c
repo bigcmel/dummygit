@@ -6,7 +6,7 @@
    K9F1208参数：存储空间为64M
 */
 
-#include "global.h"
+#include "../include/global.h"
 
 /* Define register address about nand_flash controller */
 

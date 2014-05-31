@@ -2,7 +2,7 @@
 /* lcd.c: lcd controller configure file for Samsung S3C2440                    */
 /*******************************************************************************/
 
-#include "global.h"
+#include "../include/global.h"
 
 /* Define register address about lcd controller */
 

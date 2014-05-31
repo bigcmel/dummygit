@@ -6,6 +6,9 @@ ENTRYPOINT	= 0x30000000
 
 # Programs, flags, etc.
 ARM-TOOLS-PATH	= /home/bigc/Apps/arm-linux-toolchain-4.4.3/bin
+HARDWARE-PATH	= ./hardware
+SYS-FILES-PATH	= ./sys
+OBJ-FILES-PATH	= ./OBJS
 ASM		= $(ARM-TOOLS-PATH)/arm-linux-as
 DASM		= $(ARM-TOOLS-PATH)/arm-linux-objdump
 CC		= $(ARM-TOOLS-PATH)/arm-linux-gcc
@@ -20,7 +23,7 @@ DASMFLAGS	= -D -b binary -m arm
 # This Program
 NANSLKERNEL	= kernel.bin
 NANSLKERNELELF	= kernel.elf
-OBJS		= main.o startup.o nand_flash.o lcd.o exception_handlers.o
+OBJS		= $(OBJ-FILES-PATH)/main.o $(OBJ-FILES-PATH)/startup.o $(OBJ-FILES-PATH)/nand_flash.o $(OBJ-FILES-PATH)/lcd.o $(OBJ-FILES-PATH)/exception_handlers.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -49,17 +52,17 @@ $(NANSLKERNEL) : $(NANSLKERNELELF)
 $(NANSLKERNELELF) : $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS)
 
-main.o: main.c
+$(OBJ-FILES-PATH)/main.o: main.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-startup.o: startup.S
+$(OBJ-FILES-PATH)/startup.o: startup.S
 	$(ASM) $(ASMFLAGS) -o $@ $<
 
-nand_flash.o: nand_flash.c
+$(OBJ-FILES-PATH)/nand_flash.o: $(HARDWARE-PATH)/nand_flash.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-lcd.o: lcd.c
+$(OBJ-FILES-PATH)/lcd.o: $(HARDWARE-PATH)/lcd.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-exception_handlers.o: exception_handlers.c
+$(OBJ-FILES-PATH)/exception_handlers.o: $(SYS-FILES-PATH)/exception_handlers.c
 	$(CC) $(CFLAGS) -o $@ $<
