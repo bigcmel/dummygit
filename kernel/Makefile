@@ -23,7 +23,11 @@ DASMFLAGS	= -D -b binary -m arm
 # This Program
 NANSLKERNEL	= kernel.bin
 NANSLKERNELELF	= kernel.elf
-OBJS		= $(OBJ-FILES-PATH)/main.o $(OBJ-FILES-PATH)/startup.o $(OBJ-FILES-PATH)/nand_flash.o $(OBJ-FILES-PATH)/lcd.o $(OBJ-FILES-PATH)/exception_handlers.o
+OBJS		= $(OBJ-FILES-PATH)/main.o $(OBJ-FILES-PATH)/startup.o \
+		$(OBJ-FILES-PATH)/nand_flash.o $(OBJ-FILES-PATH)/lcd.o \
+		$(OBJ-FILES-PATH)/exception_handlers.o $(OBJ-FILES-PATH)/pm.o \
+		$(OBJ-FILES-PATH)/initd.o $(OBJ-FILES-PATH)/sys_mm.o \
+		$(OBJ-FILES-PATH)/sys_power.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -65,4 +69,16 @@ $(OBJ-FILES-PATH)/lcd.o: $(HARDWARE-PATH)/lcd.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 $(OBJ-FILES-PATH)/exception_handlers.o: $(SYS-FILES-PATH)/exception_handlers.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/pm.o: $(SYS-FILES-PATH)/pm.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/initd.o: $(SYS-FILES-PATH)/initd.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/sys_mm.o: $(SYS-FILES-PATH)/sys_mm.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/sys_power.o: $(SYS-FILES-PATH)/sys_power.c
 	$(CC) $(CFLAGS) -o $@ $<

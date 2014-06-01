@@ -1,9 +1,10 @@
 /*
-proto.h: 该文件包含了供源文件调用的函数声明，有了这些声明，源文件才能调用这些函数
+hardware_proto.h: 该文件包含了供源文件调用的与硬件有关的函数声明，有了这些声明，
+源文件才能调用这些函数
 */
 
-#ifndef __PROTO_H__
-#define __PROTO_H__
+#ifndef __HARDWARE_PROTO_H__
+#define __HARDWARE_PROTO_H__
 
 #include "global.h"
 

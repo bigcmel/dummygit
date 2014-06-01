@@ -19,7 +19,7 @@
 /*----------------------- Stack and Heap Definitions -------------------------*/
 
 	.EQU	UND_Stack_Size,	0x00000000
-	.EQU	SVC_Stack_Size,	0x00000008
+	.EQU	SVC_Stack_Size,	0x00000080
 	.EQU	ABT_Stack_Size,	0x00000000
 	.EQU	FIQ_Stack_Size,	0x00000000
 	.EQU	IRQ_Stack_Size,	0x00000080
@@ -122,11 +122,6 @@ _start:
                 MOV     SP, R0
                 SUB     R0, R0, #SVC_Stack_Size
 
-@  Enter User Mode and set its Stack Pointer
-                MSR     CPSR_c, #Mode_USR
-                MOV     SP, R0
-                SUB     SL, SP, #USR_Stack_Size
-
 
 @ Enter the C code -------------------------------------------------------------
 
@@ -199,4 +194,17 @@ __user_initial_stackheap:
                 BX	LR
 
 
+@  Enter User Mode and set its Stack Pointer
+	.TEXT
+	.ARM
+
+	.GLOBL  __set_user_stack
+__set_user_stack:
+	
+                MSR     CPSR_c, #Mode_USR
+                MOV     SP, R0
+                SUB     SL, SP, #USR_Stack_Size
+		BX	LR
+
+	
 	.END
