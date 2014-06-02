@@ -53,7 +53,7 @@ void pm_scheduling()
 
   PM_TOKEN = PM_SLEEP;
 
-  if((( pm_ptr_initd->status == PM_PROC_STATUS_READY ) && ( pm_initd_is_empty()==INITD_NON_EMPTY )) || ( pm_ptr_initd->status == PM_PROC_STATUS_RUNNING ))
+  if((( pm_ptr_initd->status == PM_PROC_STATUS_READY ) && ( pm_initd_is_empty()!=INITD_EMPTY )) || ( pm_ptr_initd->status == PM_PROC_STATUS_RUNNING ))
     {
       PM_TOKEN = PM_INITD_IDX;
     }
@@ -108,7 +108,7 @@ static void pm_add_to_pm_table(unsigned int proc_idx, PTRFUNC proc_setup)
 
 static int pm_initd_is_empty()
 {
-  return INITD_IS_EMPTY;
+  return INITD_FILL_APP_NUM;
 }
 
 static int pm_get_sys_is_apply( unsigned int sys_idx )

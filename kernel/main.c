@@ -5,7 +5,7 @@
 // 定义于 startup.S，为用户模式设置栈，并进入用户模式 
 extern void __set_user_stack();
 
-void load_user_proc();
+void load_user_app_to_initd();
 
 void __main()
 {
@@ -23,12 +23,12 @@ void __main()
 
   __set_user_stack(); // 这时就相当于进入了用户模式
 
-  load_user_proc();
+  load_user_app_to_initd();
   pm_scheduling(); // 开始进程管理的进程调度
 
 
 
 }
 
-void load_user_proc()
+void load_user_app_to_initd()
 {}

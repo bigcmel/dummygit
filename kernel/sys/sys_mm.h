@@ -11,8 +11,13 @@ int SYS_MM_IS_APPLY;
 #define SYS_MM_UNAPPLY 0
 
 
+// 改变量定义于 sys_mm.h，用于指向操作系统使用的虚拟内存映射页表
+BYTE* SYS_MM_PAGETABLE;
+
 extern void sys_mm_setup();
 
 extern void sys_mm_run();
+
+extern void sys_mm_setup_pagetable( BYTE* pagetable_base_addr );
 
 #endif

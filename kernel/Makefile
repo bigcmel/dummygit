@@ -27,7 +27,7 @@ OBJS		= $(OBJ-FILES-PATH)/main.o $(OBJ-FILES-PATH)/startup.o \
 		$(OBJ-FILES-PATH)/nand_flash.o $(OBJ-FILES-PATH)/lcd.o \
 		$(OBJ-FILES-PATH)/exception_handlers.o $(OBJ-FILES-PATH)/pm.o \
 		$(OBJ-FILES-PATH)/initd.o $(OBJ-FILES-PATH)/sys_mm.o \
-		$(OBJ-FILES-PATH)/sys_power.o
+		$(OBJ-FILES-PATH)/sys_power.o $(OBJ-FILES-PATH)/APP.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -68,8 +68,8 @@ $(OBJ-FILES-PATH)/nand_flash.o: $(HARDWARE-PATH)/nand_flash.c
 $(OBJ-FILES-PATH)/lcd.o: $(HARDWARE-PATH)/lcd.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(OBJ-FILES-PATH)/exception_handlers.o: $(SYS-FILES-PATH)/exception_handlers.c
-	$(CC) $(CFLAGS) -o $@ $<
+$(OBJ-FILES-PATH)/exception_handlers.o: $(SYS-FILES-PATH)/exception_handlers.S
+	$(ASM) $(ASMFLAGS) -o $@ $<
 
 $(OBJ-FILES-PATH)/pm.o: $(SYS-FILES-PATH)/pm.c
 	$(CC) $(CFLAGS) -o $@ $<
@@ -82,3 +82,6 @@ $(OBJ-FILES-PATH)/sys_mm.o: $(SYS-FILES-PATH)/sys_mm.c
 
 $(OBJ-FILES-PATH)/sys_power.o: $(SYS-FILES-PATH)/sys_power.c
 	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/APP.o: $(SYS-FILES-PATH)/APP.S
+	$(ASM) $(ASMFLAGS) -o $@ $<

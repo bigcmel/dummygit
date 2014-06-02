@@ -1,0 +1,18 @@
+	.TEXT
+	.ARM
+
+LR_BACKUP_ADDR:
+	WORD	=0x00000000
+	
+	.GLOBL  __APP_S_jmp_to_app
+__APP_S_jmp_to_app:
+
+		STR	LR, LR_BACKUP_ADDR
+		LDR	LR, =APP_RETURN
+		MOV	PC, R0 @ 跳进 app 的代码段
+APP_RETURN:	
+		LDR	LR, =LR_BACKUP_ADDR
+		BX	LR
+
+
+	.END
