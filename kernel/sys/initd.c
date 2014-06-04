@@ -3,7 +3,7 @@
 // 改变量定义于 sys_mm.h，用于指向操作系统使用的虚拟内存映射页表
 extern BYTE* SYS_MM_PAGETABLE;
 
-// 该函数定义于 APP.S 汇编文件中
+// 该函数定义于 APP_Handler.S 汇编文件中
 extern void __APP_S_jmp_to_app( BYTE* binary_base_addr );
 
 // 该函数定义于 sys_mm.c 中，用于安装一个虚拟内存的映射页表
@@ -66,7 +66,7 @@ static void initd_jmp_to_app( unsigned int app_idx )
 {
   BYTE* binary_base_addr = INITD_TABLE[app_idx].binary_base;
   
-  // 调用在 APP.S 定义的函数，进入到应用程序进程中
+  // 调用在 APP_Handler.S 定义的函数，进入到应用程序进程中
   __APP_S_jmp_to_app( binary_base_addr );
 }
 

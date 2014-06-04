@@ -27,7 +27,8 @@ OBJS		= $(OBJ-FILES-PATH)/main.o $(OBJ-FILES-PATH)/startup.o \
 		$(OBJ-FILES-PATH)/nand_flash.o $(OBJ-FILES-PATH)/lcd.o \
 		$(OBJ-FILES-PATH)/exception_handlers.o $(OBJ-FILES-PATH)/pm.o \
 		$(OBJ-FILES-PATH)/initd.o $(OBJ-FILES-PATH)/sys_mm.o \
-		$(OBJ-FILES-PATH)/sys_power.o $(OBJ-FILES-PATH)/APP.o
+		$(OBJ-FILES-PATH)/sys_power.o $(OBJ-FILES-PATH)/APP_Handler.o \
+		$(OBJ-FILES-PATH)/SWI_Handler.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -83,5 +84,8 @@ $(OBJ-FILES-PATH)/sys_mm.o: $(SYS-FILES-PATH)/sys_mm.c
 $(OBJ-FILES-PATH)/sys_power.o: $(SYS-FILES-PATH)/sys_power.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(OBJ-FILES-PATH)/APP.o: $(SYS-FILES-PATH)/APP.S
+$(OBJ-FILES-PATH)/APP_Handler.o: $(SYS-FILES-PATH)/APP_Handler.S
 	$(ASM) $(ASMFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/SWI_Handler.o: $(SYS-FILES-PATH)/SWI_Handler.c
+	$(CC) $(CFLAGS) -o $@ $<

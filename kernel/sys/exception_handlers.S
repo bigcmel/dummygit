@@ -21,7 +21,22 @@ Undef_Handler:
 
 /* Function: 软件中断 */
 
-SWI_Handler:	
+SWI_Handler:
+
+	.EXTERN	C_SWI_Handler	@ 定义于 SWI_Handler 中
+
+	STMFD	SP!,	{R0-R12,LR}
+	LDR	R0,	[LR,#-4]
+	BIC	R0, R0, #0xFF000000
+
+	@ 第二级处理程序开始，即跳入到定义于 SWI_Handler.c 内的 C_SWI_handler 函数中
+
+	MOV	R1,	SP	@ 将栈指针作为第二参数传递给C程序类型的第2级中断处理程序
+	BL	C_SWI_Handler
+	
+	@ 第二级处理程序结束
+
+	LDMFD	SP!,	{R0-R12,PC}
 
 
 /* Function: 指令预取中止 */
@@ -43,3 +58,5 @@ IRQ_Handler:
 
 FIQ_Handler:
 	
+
+	.END
