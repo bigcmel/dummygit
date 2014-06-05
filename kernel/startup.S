@@ -53,7 +53,7 @@ __heap_limit:
 /*----------------------- Memory Definitions ---------------------------------*/
 
 	.EQU	IRAM_BASE,	0x40000000	@ Internal Memory Base Addresses
-	.EQU	BOOT_BASE,	0x00000000	@ boot.bin 的基地址
+	.EQU	KERNEL_VIR_BASE,	0x00004000	@ boot.bin 的基地址
 
 
 /*----------------------- CODE -----------------------------------------------*/
@@ -177,7 +177,7 @@ FIQ_Addr:
 	.GLOBL  Reset_Handler
 Reset_Handler:	
 
-	LDR	PC, =BOOT_BASE
+	LDR	PC, =KERNEL_VIR_BASE
 
 	
 @ Get User Initial Stack & Heap Address

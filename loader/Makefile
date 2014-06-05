@@ -20,7 +20,7 @@ DASMFLAGS	= -D -b binary -m arm
 # This Program
 NANSLLOADER	= loader.bin
 NANSLLOADERELF	= loader.elf
-OBJS		= main.o startup.o nand_flash.o lcd.o
+OBJS		= main.o startup.o nand_flash.o lcd.o memory.o
 DASMOUTPUT	= loader.bin.asm
 
 # All Phony Targets
@@ -59,4 +59,7 @@ nand_flash.o: nand_flash.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 lcd.o: lcd.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+memory.o: memory.c
 	$(CC) $(CFLAGS) -o $@ $<

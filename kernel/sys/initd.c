@@ -1,13 +1,9 @@
 #include "initd.h"
 
-// 改变量定义于 sys_mm.h，用于指向操作系统使用的虚拟内存映射页表
-extern BYTE* SYS_MM_PAGETABLE;
 
 // 该函数定义于 APP_Handler.S 汇编文件中
 extern void __APP_S_jmp_to_app( BYTE* binary_base_addr );
 
-// 该函数定义于 sys_mm.c 中，用于安装一个虚拟内存的映射页表
-extern void sys_mm_setup_pagetable( BYTE* pagetable_base_addr );
 
 static void initd_scheduling();
 
@@ -15,8 +11,7 @@ static void initd_jmp_to_app( unsigned int app_idx );
 
 static void initd_add_to_initd_table(BYTE* app_name,
 				     BYTE* app_binary_base,
-				     unsigned int app_binary_length,
-				     BYTE* app_pagetable_base);
+				     unsigned int app_binary_length);
 
 static unsigned int initd_get_empty_idx();
 
@@ -45,9 +40,9 @@ void initd_run()
       initd_scheduling();
 
       INITD_TABLE[INITD_TOKEN].status = INITD_APP_STATUS_RUNNING;
-      sys_mm_setup_pagetable(INITD_PAGETABLE[INITD_TOKEN]); // 切换到对应应用程序的页表
+
       initd_jmp_to_app( INITD_TOKEN );
-      sys_mm_setup_pagetable(SYS_MM_PAGETABLE); // 换回系统页表
+
       INITD_TABLE[INITD_TOKEN].status = INITD_APP_STATUS_FINISHED;
       INITD_FILL_APP_NUM--;
     }
@@ -73,8 +68,7 @@ static void initd_jmp_to_app( unsigned int app_idx )
 // 为全局进程表添加一个新的应用程序
 static void initd_add_to_initd_table(BYTE* app_name,
 				     BYTE* app_binary_base,
-				     unsigned int app_binary_length,
-				     BYTE* app_pagetable_base)
+				     unsigned int app_binary_length)
 {
   unsigned int i;
   BYTE char_tmp;
@@ -97,7 +91,6 @@ static void initd_add_to_initd_table(BYTE* app_name,
 
   INITD_TABLE[app_idx].binary_length = app_binary_length;
 
-  INITD_PAGETABLE[app_idx] = app_pagetable_base;
 
   INITD_TABLE[app_idx].status = INITD_APP_STATUS_READY;
 

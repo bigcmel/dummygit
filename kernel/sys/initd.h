@@ -6,10 +6,10 @@
 
 
 // initd 中进程的最大数量
-#define INITD_APP_NUM 20
+#define INITD_APP_NUM 31
 #define INITD_FIRST_APP_IDX 0
 
-// 表示 initd 中是否有应用程序进程
+// 表示 initd 中当前有多少应用程序进程
 int INITD_FILL_APP_NUM;
 
 // 示意 INITD 中没有应用程序进程
@@ -38,9 +38,6 @@ typedef struct initd_node
 
 // initd 的全局进程表
 INITD_NODE INITD_TABLE[INITD_APP_NUM];
-
-// initd 中每个进程的页表地址
-BYTE* INITD_PAGETABLE[INITD_APP_NUM];
 
 
 // initd 中应用程序进程的各种状态
