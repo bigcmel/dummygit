@@ -52,7 +52,7 @@ __heap_limit:
 
 /*----------------------- Memory Definitions ---------------------------------*/
 
-	.EQU	IRAM_BASE,	0x40000000	@ Internal Memory Base Addresses
+	.EQU	VECTORS_TABLE_BASE,	0xFFFF0000	@ 高端异常中断向量表的地址
 	.EQU	KERNEL_VIR_BASE,	0x00004000	@ boot.bin 的基地址
 
 
@@ -71,7 +71,7 @@ _start:
 @ Copy Exception Vectors to Internal RAM ---------------------------------------
 
                 ADR     R8,  Vectors    @ Source
-                LDR     R9,  =IRAM_BASE @ Destination
+                LDR     R9,  =VECTORS_TABLE_BASE	@ Destination
                 LDMIA   R8!, {R0-R7}    @ Load Vectors 
                 STMIA   R9!, {R0-R7}    @ Store Vectors 
                 LDMIA   R8!, {R0-R7}    @ Load Handler Addresses 

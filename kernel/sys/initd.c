@@ -41,6 +41,9 @@ void initd_run()
 
       INITD_TABLE[INITD_TOKEN].status = INITD_APP_STATUS_RUNNING;
 
+
+      // 这里要切换一次上下文，对应到正确的代码段
+
       initd_jmp_to_app( INITD_TOKEN );
 
       INITD_TABLE[INITD_TOKEN].status = INITD_APP_STATUS_FINISHED;

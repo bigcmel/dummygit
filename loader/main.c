@@ -1,12 +1,14 @@
 #include "proto.h"
 
-#define SDRAM_BASE 0x30000000 // sdram 的起始地址
+
+const WORD SDRAM_BASE =  0x30000000; // sdram 的起始地址
 #define IRAM_BASE 0x40000000 // Internal Memory Base Address
+#define LOADER_BASE 0x33000000 // loader 的加载地址
 
-WORD* MMU_TTB_PHY_BASE = (WORD*)SDRAM_BASE; // 页表基地址，这当然就是物理地址了，此时页表还没加载，存放在 SDRAM 开头
+WORD* MMU_TTB_PHY_BASE; // 页表基地址，这当然就是物理地址了，因为此时页表还没加载
 
 
-#define KERNEL_VIR_BASE_ADDR 0x00004000 // kernel.bin 加载到内存中的地址，这是在建立了页表后，启动了 MMU 后的虚拟地址
+#define KERNEL_VIR_BASE_ADDR 0x3E004000 // kernel.bin 加载到内存中的地址，这是在建立了页表后，启动了 MMU 后的虚拟地址
 
 #define KERNEL_BLOCK 1 // kernel.bin 在 nand flash 中所处的块号
 #define KERNEL_PAGE 0 // kernel.bin 在 nand flash 中所处的页号
@@ -33,9 +35,11 @@ BYTE* __main()
 
   /* 建立页表，并启动 MMU */
 
-  create_page_table();
+  MMU_TTB_PHY_BASE = (WORD*)SDRAM_BASE; // 确定页表的物理地址，在 SDRAM 的开头
 
-  MMU_init();
+  create_page_table(); // 建立页表
+
+  MMU_init(); // 启动 MMU，该函数在 memory.c 中定义
 
 
   /* 将 nand_flash 的 0 号块的 8～15 号页的内容（即存储了 kernel.bin 的一段程序）
@@ -101,22 +105,10 @@ static void create_page_table()
 
 
   viraddr = 0x00000000;
-  phyaddr = (WORD)SDRAM_BASE;
+  phyaddr = SDRAM_BASE + (MMU_SECTION_SIZE * 2); // 用户程序代码段的开头物理地址
 
-
-  /* PID=0 时的代码段为系统代码段，要单独拿出来处理 */
-  *(MMU_TTB_PHY_BASE + (viraddr >> 20)) = (phyaddr & 0xFFF00000) | MMU_SYS_SECDESC;
-  phyaddr += MMU_SECTION_SIZE;
-
-  *(MMU_TTB_PHY_BASE + ((viraddr + MMU_SECTION_SIZE) >> 20)) = (phyaddr & 0xFFF00000) | MMU_SYS_SECDESC;
-  phyaddr += MMU_SECTION_SIZE;
-
-      
-  viraddr += PID_SECTION_SIZE;
-
-
-  /* PID在 1～31 时的代码段为用户程序代码段，这里批量处理了 */
-  for(pid=1; pid<PID_NUM; pid++)
+  /* PID在 0～30 时的代码段为用户程序代码段，这里批量处理了 */
+  for(pid=0; pid<(PID_NUM-1); pid++)
     {
       *(MMU_TTB_PHY_BASE + (viraddr >> 20)) = (phyaddr & 0xFFF00000) | MMU_USER_SECDESC;
       phyaddr += MMU_SECTION_SIZE;
@@ -128,8 +120,19 @@ static void create_page_table()
       viraddr += PID_SECTION_SIZE;
     }
 
+  /* 第31个代码段为系统代码段，要单独拿出来处理 */
+  phyaddr = SDRAM_BASE;
 
-  /* 接下来就是为 IRAN_BASE 之后的地址空间重映射了，之后的空间虚拟物理保持一致 */
+  *(MMU_TTB_PHY_BASE + (viraddr >> 20)) = (phyaddr & 0xFFF00000) | MMU_SYS_SECDESC;
+  phyaddr += MMU_SECTION_SIZE;
+
+  *(MMU_TTB_PHY_BASE + ((viraddr + MMU_SECTION_SIZE) >> 20)) = (phyaddr & 0xFFF00000) | MMU_SYS_SECDESC;
+  phyaddr += MMU_SECTION_SIZE;
+
+  viraddr += PID_SECTION_SIZE;
+
+
+  /* 接下来就是为 IRAM_BASE 之后的地址空间重映射了，之后的空间虚拟物理保持一致 */
   viraddr = IRAM_BASE;
   phyaddr = IRAM_BASE;
 
@@ -139,4 +142,11 @@ static void create_page_table()
       viraddr += MMU_SECTION_SIZE;
       phyaddr += MMU_SECTION_SIZE;
     }
+
+  
+  /* loader 所在的这1M空间也得虚拟物理保持一致，因为此时还是在 loader 的代码下 */
+  viraddr = LOADER_BASE;
+  phyaddr = LOADER_BASE;
+
+  *(MMU_TTB_PHY_BASE + (viraddr >> 20)) = (phyaddr & 0xFFF00000) | MMU_SYS_SECDESC;
 }

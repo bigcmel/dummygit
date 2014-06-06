@@ -28,11 +28,6 @@ Stack_Mem:
 Stack_Top:
 
 
-/*----------------------- Memory Definitions ---------------------------------*/
-
-	.EQU	IRAM_BASE,	0x40000000	@ Internal Memory Base Addresses
-
-
 /*----------------------- CODE -----------------------------------------------*/
 
 /* Area Definition and Entry Point
@@ -94,16 +89,6 @@ FIQ_Handler:
 /* Reset Handler	*/
 
 Reset_Handler:	
-
-@ Copy Exception Vectors to Internal RAM ---------------------------------------
-
-                ADR     R8,  Vectors    @ Source
-                LDR     R9, =IRAM_BASE  @ Destination
-                LDMIA   R8!, {R0-R7}    @ Load Vectors 
-                STMIA   R9!, {R0-R7}    @ Store Vectors 
-                LDMIA   R8!, {R0-R7}    @ Load Handler Addresses 
-                STMIA   R9!, {R0-R7}    @ Store Handler Addresses
-
 	
 @ Setup Stack for each mode ----------------------------------------------------
 

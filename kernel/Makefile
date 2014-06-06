@@ -2,7 +2,7 @@
 # Makefile for Kernel of nansl    #
 ###################################
 
-ENTRYPOINT	= 0x00004000
+ENTRYPOINT	= 0x3E004000
 
 # Programs, flags, etc.
 ARM-TOOLS-PATH	= /home/bigc/Apps/arm-linux-toolchain-4.4.3/bin
