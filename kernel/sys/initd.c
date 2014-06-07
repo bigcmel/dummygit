@@ -9,10 +9,6 @@ static void initd_scheduling();
 
 static void initd_jmp_to_app( unsigned int app_idx );
 
-static void initd_add_to_initd_table(BYTE* app_name,
-				     BYTE* app_binary_base,
-				     unsigned int app_binary_length);
-
 static unsigned int initd_get_empty_idx();
 
 static void initd_clean_finished_app();
@@ -42,7 +38,9 @@ void initd_run()
       INITD_TABLE[INITD_TOKEN].status = INITD_APP_STATUS_RUNNING;
 
 
-      // 这里要切换一次上下文，对应到正确的代码段
+      // 切换上下文，对应到正确的代码段
+      MMU_SwitchContext( INITD_TOKEN );
+      
 
       initd_jmp_to_app( INITD_TOKEN );
 
@@ -52,26 +50,10 @@ void initd_run()
 
 }
 
-
-// 先不把进程调度搞得太复杂，暂且总是指向第一个进程即可
-static void initd_scheduling()
-{
-  INITD_TOKEN = INITD_FIRST_APP_IDX;
-}
-
-// 进入到被调度到的应用程序
-static void initd_jmp_to_app( unsigned int app_idx )
-{
-  BYTE* binary_base_addr = INITD_TABLE[app_idx].binary_base;
-  
-  // 调用在 APP_Handler.S 定义的函数，进入到应用程序进程中
-  __APP_S_jmp_to_app( binary_base_addr );
-}
-
 // 为全局进程表添加一个新的应用程序
-static void initd_add_to_initd_table(BYTE* app_name,
-				     BYTE* app_binary_base,
-				     unsigned int app_binary_length)
+unsigned int initd_register_app(BYTE* app_name,
+				BYTE* app_binary_base,
+				unsigned int app_binary_length)
 {
   unsigned int i;
   BYTE char_tmp;
@@ -98,6 +80,25 @@ static void initd_add_to_initd_table(BYTE* app_name,
   INITD_TABLE[app_idx].status = INITD_APP_STATUS_READY;
 
   INITD_FILL_APP_NUM++;
+
+  return app_idx;
+}
+
+
+// 先不把进程调度搞得太复杂，暂且总是指向第一个进程即可
+static void initd_scheduling()
+{
+  INITD_TOKEN = INITD_FIRST_APP_IDX;
+}
+
+// 进入到被调度到的应用程序
+static void initd_jmp_to_app( unsigned int app_idx )
+{
+  BYTE* binary_base_addr = INITD_TABLE[app_idx].binary_base;
+  
+  // 调用在 APP_Handler.S 定义的函数，进入到应用程序进程中
+  __APP_S_jmp_to_app( binary_base_addr );
+
 }
 
 static unsigned int initd_get_empty_idx()

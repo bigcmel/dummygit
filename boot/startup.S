@@ -7,7 +7,7 @@
 	.EQU	Mode_USR,	0x10
 	.EQU	Mode_FIQ,	0x11
 	.EQU	Mode_IRQ,	0x12
-	.EQU	Mode_SVC,	0x13
+	.EQU	Mode_SVE,	0x13
 	.EQU	Mode_ABT,	0x17
 	.EQU	Mode_UND,	0x1B
 	.EQU	Mode_SYS,	0x1F
@@ -18,13 +18,13 @@
 
 /*----------------------- Stack Definitions ---------------------------------*/
 
-	.EQU	SVC_Stack_Size,	0x00000008
+	.EQU	SVE_Stack_Size,	0x00000008
 
 	.BSS
 	.ALIGN	3
 
 Stack_Mem:
-	.SPACE   SVC_Stack_Size
+	.SPACE   SVE_Stack_Size
 Stack_Top:
 
 
@@ -95,12 +95,12 @@ Reset_Handler:
                 LDR     R0, =Stack_Top
 
 @  Enter Supervisor Mode and set its Stack Pointer
-		MOV	R1,	#Mode_SVC
+		MOV	R1,	#Mode_SVE
 		ORR	R1,	#I_BIT
 		ORR	R1,	#F_BIT
                 MSR     CPSR_c, R1
                 MOV     SP, R0
-                SUB     R0, R0, #SVC_Stack_Size
+                SUB     R0, R0, #SVE_Stack_Size
 
 
 @ Enter the C code -------------------------------------------------------------

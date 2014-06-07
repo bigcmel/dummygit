@@ -2,6 +2,7 @@
 #define __PM_H__
 
 #include "../include/global.h"
+#include "../include/hardware_proto.h"
 #include "initd.h"
 #include "sys_mm.h"
 #include "sys_power.h"

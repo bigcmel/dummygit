@@ -10,9 +10,10 @@ WORD* MMU_TTB_PHY_BASE; // 页表基地址，这当然就是物理地址了，�
 
 #define KERNEL_VIR_BASE_ADDR 0x3E004000 // kernel.bin 加载到内存中的地址，这是在建立了页表后，启动了 MMU 后的虚拟地址
 
-#define KERNEL_BLOCK 1 // kernel.bin 在 nand flash 中所处的块号
-#define KERNEL_PAGE 0 // kernel.bin 在 nand flash 中所处的页号
-#define KERNEL_PAGE_NUM 32 // kernel.bin 所占的页数
+#define KERNEL_BLOCK 1 // kernel.bin 的基址在 nand flash 中所处的块号
+#define KERNEL_BLOCK_NUM 4 // kernel.bin 所占的块数
+#define KERNEL_PAGE 0 // kernel.bin 的基址在 nand flash 中所处的页号
+#define KERNEL_PAGE_NUM 32 // kernel.bin 在每块所占的页数
 
 
 // 创建页表
@@ -27,7 +28,7 @@ BYTE* __main()
   BYTE* kernel_base = (BYTE*)KERNEL_VIR_BASE_ADDR;
   BYTE* ptr = kernel_base;
 
-  unsigned int i;
+  unsigned int i, j;
 
   // 为获取 nand_flash 的块数，页数，页大小等等信息所声明的参数
   unsigned int nf_blocknum, nf_pagepblock, nf_mainsize, nf_sparesize;
@@ -50,17 +51,21 @@ BYTE* __main()
 
   NF_GetBlockPageInfo(&nf_blocknum, &nf_pagepblock, &nf_mainsize, &nf_sparesize);
 
-  for(i=0 ; i<KERNEL_PAGE_NUM ; i++)
+  for(j=0 ; j<KERNEL_BLOCK_NUM ; j++)
     {
-      if( NF_ReadPage(KERNEL_BLOCK, KERNEL_PAGE+i, ptr) )
+      for(i=0 ; i<KERNEL_PAGE_NUM ; i++)
 	{
-	  ptr += nf_mainsize;
+      
+	  if( NF_ReadPage(KERNEL_BLOCK+j, KERNEL_PAGE+i, ptr) )
+	    {
+	      ptr += nf_mainsize;
+	    }
+	  else
+	    {
+	      LCD_ClearScr(0xFFFFFF);
+	      while(1){}
+	    }      
 	}
-      else
-	{
-	  LCD_ClearScr(0xFFFFFF);
-	  while(1){}
-	}      
     }
 
 

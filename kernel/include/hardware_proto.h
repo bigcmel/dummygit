@@ -9,6 +9,13 @@ hardware_proto.h: 该文件包含了供源文件调用的与硬件有关的函�
 #include "global.h"
 
 
+// memory.c:
+
+extern void MC_init();
+extern void MMU_init();
+extern void MMU_SwitchContext( unsigned int app_idx );
+
+
 /* nand_flash.c:
  注意这里的函数（写，读，擦除，标志坏块）在运行之前全都不检查是否是坏块，
  而且即使操作不成功，也不会标志为坏块，

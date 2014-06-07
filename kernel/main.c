@@ -1,29 +1,34 @@
-#include "include/hardware_proto.h"
 #include "sys/pm.h"
+#include "sys/syscall.h"
 
-
-// 定义于 startup.S，为用户模式设置栈，并进入用户模式 
-extern void __set_user_stack();
-
-void load_user_app_to_initd();
+/* 这个函数应该是放在外部中断的处理函数里的，
+   外部申请加载一个程序的时候调用，
+   放在这里只为测试。*/
+void load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, unsigned int app_binary_length );
 
 void __main()
 {
 
   /* 变量声明 */
 
-  unsigned int i;
+  WORD binary_base;
+  unsigned int binary_length;
 
 
+  // 示意程序到了这里
   LCD_ClearScr( 0x909090 );
 
   
-  
-  pm_setup(); // 进程管理器的安装与初始化
+  // 进程管理器的安装与初始化    
+  pm_setup();
 
-  __set_user_stack(); // 设置用户模式的堆栈，之后就进入了用户模式
 
-  load_user_app_to_initd();
+  // 载入一个应用程序，名叫 "APP_0"
+
+  binary_base = 0x00000000;
+  binary_length = 1024;
+
+  load_user_app_to_initd( "APP_0", (BYTE*)binary_base, binary_length );
 
 
   while(1) // 姑且先这样写了，不停地做调度
@@ -34,10 +39,61 @@ void __main()
 
 }
 
-void load_user_app_to_initd()
+void load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, unsigned int app_binary_length )
 {
+  unsigned int status; // 函数执行情况
+  unsigned int i;
+
+  unsigned int app_idx;
+
+  unsigned int block;
+  unsigned int page;
+  unsigned int page_num;
+  BYTE* buffer;
+  
+  unsigned int nf_blocknum;
+  unsigned int nf_pagepblock;
+  unsigned int nf_mainsize;
+  unsigned int nf_sparesize;
+
+
   /* 先注册 initd 的进程表 */
 
-  /* 调用 SWI 中断，将代码从 SDRAM 读到内存中 */
+  app_binary_base = 0x00000000;
+  app_binary_length = 1024;
+
+  app_idx = initd_register_app(app_name, app_binary_base, app_binary_length);
+
+
+  /* 这里要切换一下上下文，切换到 app_idx 对应的代码断去 */
+  
+  MMU_SwitchContext( app_idx );
+
+
+  /* 调用系统调用（ SWI 中断），将代码从 SDRAM 读到内存中 */
+  
+  NF_GetBlockPageInfo(&nf_blocknum, &nf_pagepblock, &nf_mainsize, &nf_sparesize);
+
+  block = 5;
+  page = 0;
+  page_num = ((INITD_TABLE[app_idx].binary_length - 1) / nf_mainsize) + 1;
+  buffer = INITD_TABLE[app_idx].binary_base;
+
+  for(i=0; i<page_num; i++)
+    {
+      status = NF_WritePage( block, page, buffer );
+      page++;
+      buffer += nf_mainsize;
+      
+      if(page == 32)
+	{
+	  block++;
+	  page = 0;
+	}
+    }
 
 }
+
+// gcc 的静态库要求链接到的函数，为空就好
+void raise()
+{}

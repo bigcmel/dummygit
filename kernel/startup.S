@@ -2,30 +2,22 @@
 /* S3C2440.S: Startup file kernel for Samsung S3C2440                        */
 /*****************************************************************************/
 
+
 /* Standard definitions of Mode bits and Interrupt (I & F) flags in PSRs     */
 
-	.EQU	Mode_USR,	0x10
-	.EQU	Mode_FIQ,	0x11
-	.EQU	Mode_IRQ,	0x12
-	.EQU	Mode_SVC,	0x13
-	.EQU	Mode_ABT,	0x17
-	.EQU	Mode_UND,	0x1B
-	.EQU	Mode_SYS,	0x1F
+	.include	"include/global.inc"
 
-	.EQU	I_BIT,	0x80	@ when I bit is set, IRQ is disabled
-	.EQU	F_BIT,	0x40	@ when F bit is set, FIQ is disabled
-
-
+	
 /*----------------------- Stack and Heap Definitions -------------------------*/
 
 	.EQU	UND_Stack_Size,	0x00000000
-	.EQU	SVC_Stack_Size,	0x00000080
+	.EQU	SVE_Stack_Size,	0x00000080
 	.EQU	ABT_Stack_Size,	0x00000000
 	.EQU	FIQ_Stack_Size,	0x00000000
 	.EQU	IRQ_Stack_Size,	0x00000080
 	.EQU	USR_Stack_Size,	0x00000400
 
-	.EQU	ISR_Stack_Size,	(UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + FIQ_Stack_Size + IRQ_Stack_Size)
+	.EQU	ISR_Stack_Size,	(UND_Stack_Size + SVE_Stack_Size + ABT_Stack_Size + FIQ_Stack_Size + IRQ_Stack_Size)
 
 	.BSS
 	.ALIGN	3
@@ -115,13 +107,24 @@ _start:
                 SUB     R0, R0, #IRQ_Stack_Size
 
 @  Enter Supervisor Mode and set its Stack Pointer
-		MOV	R1,	#Mode_SVC
+		MOV	R1,	#Mode_SVE
 		ORR	R1,	#I_BIT
 		ORR	R1,	#F_BIT
                 MSR     CPSR_c, R1
                 MOV     SP, R0
-                SUB     R0, R0, #SVC_Stack_Size
+                SUB     R0, R0, #SVE_Stack_Size
 
+@  Enter User Mode and set its Stack Pointer
+	
+                MSR     CPSR_c, #Mode_USR
+                MOV     SP, R0
+                SUB     SL, SP, #USR_Stack_Size
+		BX	LR
+
+@ 由于刚才进入了用户模式，所以这里要通过 SWI 中断的方式回到特权模式
+
+	SWI	0x0
+	
 
 @ Enter the C code -------------------------------------------------------------
 
@@ -194,17 +197,7 @@ __user_initial_stackheap:
                 BX	LR
 
 
-@  Enter User Mode and set its Stack Pointer
-	.TEXT
-	.ARM
 
-	.GLOBL  __set_user_stack
-__set_user_stack:
-	
-                MSR     CPSR_c, #Mode_USR
-                MOV     SP, R0
-                SUB     SL, SP, #USR_Stack_Size
-		BX	LR
 
 	
 	.END

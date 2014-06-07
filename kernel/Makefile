@@ -19,6 +19,7 @@ CFLAGS		= -c
 LDFLAGS		= -Ttext $(ENTRYPOINT)
 OBJFLAGS	= -O binary -S
 DASMFLAGS	= -D -b binary -m arm
+LIBPATH		= -lgcc -L $(ARM-TOOLS-PATH)/../lib/gcc/arm-none-linux-gnueabi/4.4.3	# 添加 gcc 提供的静态库，比如提供了除法功能的软实现，因为 arm 的硬件没有提供除法功能
 
 # This Program
 NANSLKERNEL	= kernel.bin
@@ -28,7 +29,8 @@ OBJS		= $(OBJ-FILES-PATH)/main.o $(OBJ-FILES-PATH)/startup.o \
 		$(OBJ-FILES-PATH)/exception_handlers.o $(OBJ-FILES-PATH)/pm.o \
 		$(OBJ-FILES-PATH)/initd.o $(OBJ-FILES-PATH)/sys_mm.o \
 		$(OBJ-FILES-PATH)/sys_power.o $(OBJ-FILES-PATH)/APP_Handler.o \
-		$(OBJ-FILES-PATH)/SWI_Handler.o
+		$(OBJ-FILES-PATH)/SWI_Handler.o $(OBJ-FILES-PATH)/syscall.o \
+		$(OBJ-FILES-PATH)/memory.o
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
@@ -55,7 +57,7 @@ $(NANSLKERNEL) : $(NANSLKERNELELF)
 	$(OBJ) $(OBJFLAGS) $< $@
 
 $(NANSLKERNELELF) : $(OBJS)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LIBPATH)
 
 $(OBJ-FILES-PATH)/main.o: main.c
 	$(CC) $(CFLAGS) -o $@ $<
@@ -88,4 +90,10 @@ $(OBJ-FILES-PATH)/APP_Handler.o: $(SYS-FILES-PATH)/APP_Handler.S
 	$(ASM) $(ASMFLAGS) -o $@ $<
 
 $(OBJ-FILES-PATH)/SWI_Handler.o: $(SYS-FILES-PATH)/SWI_Handler.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/syscall.o: $(SYS-FILES-PATH)/syscall.S
+	$(ASM) $(ASMFLAGS) -o $@ $<
+
+$(OBJ-FILES-PATH)/memory.o:  $(HARDWARE-PATH)/memory.c
 	$(CC) $(CFLAGS) -o $@ $<

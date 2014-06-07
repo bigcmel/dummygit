@@ -3,7 +3,7 @@
 
 
 #include "../include/global.h"
-
+#include "../include/hardware_proto.h"
 
 // initd 中进程的最大数量
 #define INITD_APP_NUM 31
@@ -52,6 +52,7 @@ extern void initd_setup();
 
 extern void initd_run();
 
+extern unsigned int initd_register_app(BYTE* app_name, BYTE* app_binary_base, unsigned int app_binary_length);
 
 
 

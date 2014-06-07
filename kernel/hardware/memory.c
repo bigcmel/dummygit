@@ -61,3 +61,57 @@ void MC_init()
   MRSRB6 = MRSRB6_Val;
   MRSRB7 = MRSRB7_Val;
 }
+
+
+#define SDRAM_BASE 0x30000000
+
+void MMU_init()
+{
+  WORD ttb_base = SDRAM_BASE;
+
+  /* 下面用到的页码均是《ARM体系结构与编程》这本书的页码 */
+
+  __asm__
+    (
+     "MOV R0, #0\n"
+     "MCR P15, 0, R0, C7, C7, 0\n" //p205 使无效指令cache和数据cache      
+     "MCR P15, 0, R0, C7, C10, 4\n" //p205 清空写缓冲区
+     "MCR P15, 0, R0, C8, C7, 0\n" //p189 使无效快表内容
+
+     "MOV R4, %0\n" // 读取页表的基地址到 R4
+     "MCR P15, 0, R4, C2, C0, 0\n" // C2 中存储着页表的基地址
+
+     "MOV R0, #0x0000000D\n" // P188，该数表示域0为用户类型，域1为管理者类型
+     "MCR P15, 0, R0, C3, C0, 0\n" // 设置 MMU 的域
+
+
+     "MRC P15, 0, R0, C1, C0, 0\n" // 读控制寄存器 C1 的当前值
+
+     // 以下设置参考 P174
+     "BIC R0, R0, #0x0080\n" // 清除B位，选择小端内存模式
+     "ORR R0, R0, #0x0002\n" // A位，使能地址对齐检查功能
+     "ORR R0, R0, #0x0004\n" // C位，使能数据cache
+     "ORR R0, R0, #0x1000\n" // I位，使能指令cache
+     "ORR R0, R0, #0x0008\n" // W位，使能写入缓冲
+     "ORR R0, R0, #0x2000\n" // V位，控制向量表的位置为 0xFFFF0000～0xFFFF001C
+     "ORR R0, R0, #0x0001\n" // M位，使能 MMU
+
+     "MCR P15, 0, R0, C1, C0, 0\n": /* 汇编语句部分结束 */ : /* 无输出部分 */
+     "r"( ttb_base ) // 输入部分，传入一个参数，以占位符'%0'表示
+     );
+
+}
+
+void MMU_SwitchContext( unsigned int app_idx )
+{
+  // 参考《ARM体系结构与编程》P208
+  WORD PID = (app_idx << 25);
+
+  __asm__
+    (
+     "MOV R0, %0\n"
+     "MCR P15, 0, R0, C13, C0, 0\n": /*汇编语句结束*/ : /*没有输出*/
+     "r"(PID) // %0 占位符即代表 PID
+     );
+
+}
