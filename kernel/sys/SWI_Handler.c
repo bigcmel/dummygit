@@ -25,6 +25,9 @@ void C_SWI_Handler( WORD number, WORD* reg )
     case 2: // 往 nand flash 写
       (*ptr_param_0) = NF_WritePage( *ptr_param_0, *ptr_param_1, (BYTE*)(*ptr_param_2) );
       break;
+    case 3: // 往 nand flash 写
+      LCD_ClearScr( *ptr_param_0 );
+      break;
     default: // 无效的 SWI 号时执行的代码
       break;
     }

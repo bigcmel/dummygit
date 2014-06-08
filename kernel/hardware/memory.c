@@ -102,7 +102,7 @@ void MMU_init()
 
 }
 
-void MMU_SwitchContext( unsigned int app_idx )
+void MMU_SwitchContext( WORD app_idx )
 {
   // 参考《ARM体系结构与编程》P208
   WORD PID = (app_idx << 25);

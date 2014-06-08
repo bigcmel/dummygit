@@ -19,7 +19,7 @@ int INITD_FILL_APP_NUM;
 #define INITD_FILL 99
 
 // initd 的令牌，指向当前正在运行的进程
-unsigned int INITD_TOKEN;
+WORD INITD_TOKEN;
 
 
 // initd 中进程名的最大长度
@@ -29,11 +29,11 @@ unsigned int INITD_TOKEN;
 typedef struct initd_node
 {
   BYTE name[INITD_APP_NAME_LENGTH]; // 进程名
-  unsigned int name_length; // 进程名长度
-  unsigned int idx; // 进程索引值
+  WORD name_length; // 进程名长度
+  WORD idx; // 进程索引值
   int status; // 进程所处的状态
   BYTE* binary_base; // 二进制代码在内存中的起始地址
-  unsigned int binary_length; // 二进制代码的长度，以字节为单位
+  WORD binary_length; // 二进制代码的长度，以字节为单位
 }INITD_NODE, *ptr_initd_node;
 
 // initd 的全局进程表
@@ -52,7 +52,7 @@ extern void initd_setup();
 
 extern void initd_run();
 
-extern unsigned int initd_register_app(BYTE* app_name, BYTE* app_binary_base, unsigned int app_binary_length);
+extern WORD initd_register_app(BYTE* app_name, BYTE* app_binary_base, WORD app_binary_length);
 
 
 

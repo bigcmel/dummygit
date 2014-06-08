@@ -28,10 +28,10 @@ BYTE* __main()
   BYTE* kernel_base = (BYTE*)KERNEL_VIR_BASE_ADDR;
   BYTE* ptr = kernel_base;
 
-  unsigned int i, j;
+  WORD i, j;
 
   // 为获取 nand_flash 的块数，页数，页大小等等信息所声明的参数
-  unsigned int nf_blocknum, nf_pagepblock, nf_mainsize, nf_sparesize;
+  WORD nf_blocknum, nf_pagepblock, nf_mainsize, nf_sparesize;
 
 
   /* 建立页表，并启动 MMU */
@@ -102,11 +102,11 @@ static void create_page_table()
   const WORD MMU_SECTION_SIZE = 0x00100000; // 一个段占据的 1M
   const WORD PID_SECTION_SIZE = 0x02000000; // 一个进程代码段有 32M
 
-  const unsigned int PID_NUM = 32; // p206，快速上下文切换技术中的进程代码段的数量
+  const WORD PID_NUM = 32; // p206，快速上下文切换技术中的进程代码段的数量
 
   WORD viraddr, phyaddr; // 虚拟地址与物理地址
 
-  unsigned int pid;
+  WORD pid;
 
 
   viraddr = 0x00000000;

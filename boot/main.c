@@ -14,10 +14,10 @@ BYTE* __main()
   BYTE* loader_base = (BYTE*)LOADER_BASE_ADDR;
   BYTE* ptr = loader_base;
 
-  unsigned int i;
+  WORD i;
 
   // 获取 nand_flash 的块数，页数，页大小等等信息
-  unsigned int nf_blocknum, nf_pagepblock, nf_mainsize, nf_sparesize;
+  WORD nf_blocknum, nf_pagepblock, nf_mainsize, nf_sparesize;
 
 
   /* 各种初始化 */

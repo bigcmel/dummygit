@@ -4,7 +4,7 @@
 /* 这个函数应该是放在外部中断的处理函数里的，
    外部申请加载一个程序的时候调用，
    放在这里只为测试。*/
-void load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, unsigned int app_binary_length );
+WORD load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, WORD app_binary_length );
 
 void __main()
 {
@@ -12,7 +12,7 @@ void __main()
   /* 变量声明 */
 
   WORD binary_base;
-  unsigned int binary_length;
+  WORD binary_length;
 
 
   // 示意程序到了这里
@@ -23,12 +23,12 @@ void __main()
   pm_setup();
 
 
-  // 载入一个应用程序，名叫 "APP_0"
+  // 载入一个应用程序，名叫 "app_0"
 
   binary_base = 0x00000000;
   binary_length = 1024;
 
-  load_user_app_to_initd( "APP_0", (BYTE*)binary_base, binary_length );
+  load_user_app_to_initd( "app_0", (BYTE*)binary_base, binary_length );
 
 
   while(1) // 姑且先这样写了，不停地做调度
@@ -39,22 +39,22 @@ void __main()
 
 }
 
-void load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, unsigned int app_binary_length )
+WORD load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, WORD app_binary_length )
 {
-  unsigned int status; // 函数执行情况
-  unsigned int i;
+  WORD status; // 函数执行情况
+  WORD i;
 
-  unsigned int app_idx;
+  WORD app_idx;
 
-  unsigned int block;
-  unsigned int page;
-  unsigned int page_num;
+  WORD block;
+  WORD page;
+  WORD page_num;
   BYTE* buffer;
   
-  unsigned int nf_blocknum;
-  unsigned int nf_pagepblock;
-  unsigned int nf_mainsize;
-  unsigned int nf_sparesize;
+  WORD nf_blocknum;
+  WORD nf_pagepblock;
+  WORD nf_mainsize;
+  WORD nf_sparesize;
 
 
   /* 先注册 initd 的进程表 */
@@ -68,6 +68,12 @@ void load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, unsigned int
   /* 这里要切换一下上下文，切换到 app_idx 对应的代码断去 */
   
   MMU_SwitchContext( app_idx );
+
+  
+  /* 向 sys_mm 申请需要的内存空间 */
+
+  if( ! sys_mm_apply_sdram(app_idx, (WORD)app_binary_base, app_binary_length) )
+    return RETURN_FAILED;
 
 
   /* 调用系统调用（ SWI 中断），将代码从 SDRAM 读到内存中 */
@@ -92,6 +98,7 @@ void load_user_app_to_initd( BYTE* app_name, BYTE* app_binary_base, unsigned int
 	}
     }
 
+  return RETURN_SUCCESS;
 }
 
 // gcc 的静态库要求链接到的函数，为空就好

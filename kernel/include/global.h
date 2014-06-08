@@ -11,6 +11,10 @@
 #define Mode_SYS 0x1F
 
 
+#define RETURN_SUCCESS 1
+#define RETURN_FAILED 0
+
+
 typedef unsigned char BYTE;
 typedef unsigned short HWORD; // 半字，两个字节
 typedef unsigned long WORD; // 字，四个字节

@@ -133,8 +133,8 @@ void NF_init()
 
 /* Function: 得到 nand_flash 的块数，页数，和每页的大小 */
 
-void NF_GetBlockPageInfo(unsigned int* nf_blocknum, unsigned int* nf_pagepblock,
-			 unsigned int* nf_mainsize, unsigned int* nf_sparesize)
+void NF_GetBlockPageInfo(WORD* nf_blocknum, WORD* nf_pagepblock,
+			 WORD* nf_mainsize, WORD* nf_sparesize)
 {
   *nf_blocknum = NF_BLOCKNUM;
   *nf_pagepblock = NF_PAGEPBLOCK;
@@ -166,10 +166,10 @@ WORD NF_CheckId()
    参数：block 块号；page 页号；buffer 读到的缓冲区 
    返回值：0 读错误；1 读成功 */
 
-unsigned int NF_ReadPage(unsigned int block,unsigned int page,BYTE* buffer)
+WORD NF_ReadPage(WORD block,WORD page,BYTE* buffer)
 {
   int i;
-  unsigned int blockPage = (block << 5) + page;
+  WORD blockPage = (block << 5) + page;
   BYTE* bufPt = buffer;
   BYTE ECCbuf[6];
 
@@ -234,10 +234,10 @@ unsigned int NF_ReadPage(unsigned int block,unsigned int page,BYTE* buffer)
    参数：block 要查看的块号
    返回值：0 不是坏块；1 是坏块 */
 
-unsigned int NF_IsBadBlock(unsigned int block)
+WORD NF_IsBadBlock(WORD block)
 {
   int i;
-  unsigned int blockPage = (block << 5);
+  WORD blockPage = (block << 5);
   unsigned short markLen = 7;
   BYTE tmp; // 暂存一个字节
 

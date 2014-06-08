@@ -7,10 +7,10 @@ static void pm_err_handler();
 static void pm_run();
 
 // 得到一个 sys 进程是否申请 CPU
-static int pm_get_sys_is_apply( unsigned int sys_idx );
+static int pm_get_sys_is_apply( WORD sys_idx );
 
 // 添加一个进程项到全局进程表中
-static void pm_add_to_pm_table(unsigned int proc_idx, PTRFUNC proc_setup);
+static void pm_add_to_pm_table(WORD proc_idx, PTRFUNC proc_setup);
 
 // 查看 initd 中是否有应用程序进程
 static int pm_initd_is_empty();
@@ -19,7 +19,7 @@ static int pm_initd_is_empty();
 // 为操作系统安装 pm，并将其初始化
 void pm_setup()
 {
-  unsigned int proc_idx;
+  WORD proc_idx;
 
   static PTRFUNC ptr_initd_setup = initd_setup;
   static PTRFUNC ptr_sys_mm_setup = sys_mm_setup;
@@ -49,7 +49,7 @@ void pm_setup()
  */
 void pm_scheduling()
 {
-  static unsigned int SYS_IDX;
+  static WORD SYS_IDX;
 
   PM_TOKEN = PM_SLEEP;
 
@@ -95,7 +95,7 @@ static void pm_run()
   
 }
 
-static void pm_add_to_pm_table(unsigned int proc_idx, PTRFUNC proc_setup)
+static void pm_add_to_pm_table(WORD proc_idx, PTRFUNC proc_setup)
 {
   ptr_pm_node pm_node_tmp = &PM_TABLE[proc_idx];
 
@@ -111,7 +111,7 @@ static int pm_initd_is_empty()
   return INITD_FILL_APP_NUM;
 }
 
-static int pm_get_sys_is_apply( unsigned int sys_idx )
+static int pm_get_sys_is_apply( WORD sys_idx )
 {
   switch( sys_idx )
     {

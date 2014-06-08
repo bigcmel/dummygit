@@ -7,9 +7,9 @@ extern void __APP_S_jmp_to_app( BYTE* binary_base_addr );
 
 static void initd_scheduling();
 
-static void initd_jmp_to_app( unsigned int app_idx );
+static void initd_jmp_to_app( WORD app_idx );
 
-static unsigned int initd_get_empty_idx();
+static WORD initd_get_empty_idx();
 
 static void initd_clean_finished_app();
 
@@ -51,13 +51,13 @@ void initd_run()
 }
 
 // 为全局进程表添加一个新的应用程序
-unsigned int initd_register_app(BYTE* app_name,
+WORD initd_register_app(BYTE* app_name,
 				BYTE* app_binary_base,
-				unsigned int app_binary_length)
+				WORD app_binary_length)
 {
-  unsigned int i;
+  WORD i;
   BYTE char_tmp;
-  unsigned int app_idx;
+  WORD app_idx;
   
   i = 0;
   app_idx = initd_get_empty_idx();
@@ -92,7 +92,7 @@ static void initd_scheduling()
 }
 
 // 进入到被调度到的应用程序
-static void initd_jmp_to_app( unsigned int app_idx )
+static void initd_jmp_to_app( WORD app_idx )
 {
   BYTE* binary_base_addr = INITD_TABLE[app_idx].binary_base;
   
@@ -101,9 +101,9 @@ static void initd_jmp_to_app( unsigned int app_idx )
 
 }
 
-static unsigned int initd_get_empty_idx()
+static WORD initd_get_empty_idx()
 {
-  unsigned int app_idx;
+  WORD app_idx;
   int status_tmp;
 
   for(app_idx=INITD_FIRST_APP_IDX ; app_idx<INITD_APP_NUM ; app_idx++)
@@ -121,7 +121,7 @@ static unsigned int initd_get_empty_idx()
 
 static void initd_clean_finished_app()
 {
-  unsigned int app_idx;
+  WORD app_idx;
   int* status_tmp;
 
   for(app_idx=INITD_FIRST_APP_IDX ; app_idx<INITD_APP_NUM ; app_idx++)

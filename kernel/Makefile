@@ -9,6 +9,7 @@ ARM-TOOLS-PATH	= /home/bigc/Apps/arm-linux-toolchain-4.4.3/bin
 HARDWARE-PATH	= ./hardware
 SYS-FILES-PATH	= ./sys
 OBJ-FILES-PATH	= ./OBJS
+LIB-FILES-PATH	= ./lib
 ASM		= $(ARM-TOOLS-PATH)/arm-linux-as
 DASM		= $(ARM-TOOLS-PATH)/arm-linux-objdump
 CC		= $(ARM-TOOLS-PATH)/arm-linux-gcc
@@ -29,28 +30,29 @@ OBJS		= $(OBJ-FILES-PATH)/main.o $(OBJ-FILES-PATH)/startup.o \
 		$(OBJ-FILES-PATH)/exception_handlers.o $(OBJ-FILES-PATH)/pm.o \
 		$(OBJ-FILES-PATH)/initd.o $(OBJ-FILES-PATH)/sys_mm.o \
 		$(OBJ-FILES-PATH)/sys_power.o $(OBJ-FILES-PATH)/APP_Handler.o \
-		$(OBJ-FILES-PATH)/SWI_Handler.o $(OBJ-FILES-PATH)/syscall.o \
-		$(OBJ-FILES-PATH)/memory.o
+		$(OBJ-FILES-PATH)/SWI_Handler.o $(OBJ-FILES-PATH)/memory.o
+LIBS		= $(LIB-FILES-PATH)/syscall.lib
 DASMOUTPUT	= kernel.bin.asm
 
 # All Phony Targets
 .PHONY : everything final clean realclean disasm all
 
 # Default starting position
-everything : $(NANSLKERNEL)
+everything : $(NANSLKERNEL) $(LIBS)
 
 all : realclean everything
 
 final : all clean
 
 clean :
-	rm -f $(OBJS) $(DASMOUTPUT) $(NANSLKERNELELF)
+	rm -f $(OBJS) $(LIBS) $(DASMOUTPUT) $(NANSLKERNELELF)
 
 realclean :
-	rm -f $(OBJS) $(DASMOUTPUT) $(NANSLKERNELELF) $(NANSLKERNEL)
+	rm -f $(NANSLKERNEL) $(OBJS) $(LIBS) $(DASMOUTPUT) $(NANSLKERNELELF)
 
 disasm :
 	$(DASM) $(DASMFLAGS) $(NANSLKERNEL) > $(DASMOUTPUT)
+
 
 # All object dependencies files
 $(NANSLKERNEL) : $(NANSLKERNELELF)
@@ -58,6 +60,7 @@ $(NANSLKERNEL) : $(NANSLKERNELELF)
 
 $(NANSLKERNELELF) : $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LIBPATH)
+
 
 $(OBJ-FILES-PATH)/main.o: main.c
 	$(CC) $(CFLAGS) -o $@ $<
@@ -97,3 +100,7 @@ $(OBJ-FILES-PATH)/syscall.o: $(SYS-FILES-PATH)/syscall.S
 
 $(OBJ-FILES-PATH)/memory.o:  $(HARDWARE-PATH)/memory.c
 	$(CC) $(CFLAGS) -o $@ $<
+
+
+$(LIB-FILES-PATH)/syscall.lib: $(LIB-FILES-PATH)/src/syscall.S
+	$(ASM) $(ASMFLAGS) -o $@ $<

@@ -27,7 +27,7 @@
 // 定一个结构体，用于描述 PM 进程表中的一项
 typedef struct pm_node
 {
-  unsigned int idx; // 该进程在进程管理表中的索引
+  WORD idx; // 该进程在进程管理表中的索引
   int status; // 描述该进程所处的状态
   PTRFUNC proc_setup_func; // 该进程的初始化函数
 }PM_NODE, *ptr_pm_node;
@@ -36,7 +36,7 @@ typedef struct pm_node
 PM_NODE PM_TABLE[PM_PROC_NUM];
 
 // 进程管理器的令牌，指向当前正在运行的进程
-unsigned int PM_TOKEN;
+WORD PM_TOKEN;
 
 // 进程表中每一项进程对应的索引
 #define PM_INITD_IDX 0

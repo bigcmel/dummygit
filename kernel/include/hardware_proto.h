@@ -13,7 +13,7 @@ hardware_proto.h: 该文件包含了供源文件调用的与硬件有关的函�
 
 extern void MC_init();
 extern void MMU_init();
-extern void MMU_SwitchContext( unsigned int app_idx );
+extern void MMU_SwitchContext( WORD app_idx );
 
 
 /* nand_flash.c:
@@ -22,14 +22,14 @@ extern void MMU_SwitchContext( unsigned int app_idx );
  不管是检测坏块还是标志坏块都要在函数外部使用 NF_MarkBadBlock 和 NF_IsBadBlock 函数完成
 */
 extern void NF_init();
-extern void NF_GetBlockPageInfo(unsigned int* nf_blocknum, unsigned int* nf_pagepblock,
-				unsigned int* nf_mainsize, unsigned int* nf_sparesize);
+extern void NF_GetBlockPageInfo(WORD* nf_blocknum, WORD* nf_pagepblock,
+				WORD* nf_mainsize, WORD* nf_sparesize);
 extern WORD NF_CheckId(); // 获取厂商ID和设备ID
-extern unsigned int NF_WritePage(unsigned int block,unsigned int page,BYTE* buffer);
-extern unsigned int NF_ReadPage(unsigned int block,unsigned int page,BYTE* buffer);
-extern unsigned int NF_EraseBlock(unsigned int block); // 擦除一个块
-extern unsigned int NF_MarkBadBlock(unsigned int block); // 把一个块标记为坏块
-extern unsigned int NF_IsBadBlock(unsigned int block); // 判断一个块是不是坏块
+extern WORD NF_WritePage(WORD block,WORD page,BYTE* buffer);
+extern WORD NF_ReadPage(WORD block,WORD page,BYTE* buffer);
+extern WORD NF_EraseBlock(WORD block); // 擦除一个块
+extern WORD NF_MarkBadBlock(WORD block); // 把一个块标记为坏块
+extern WORD NF_IsBadBlock(WORD block); // 判断一个块是不是坏块
 
 /* lcd.c: */
 extern void LCD_Init();
