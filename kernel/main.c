@@ -1,5 +1,5 @@
 #include "sys/pm.h"
-#include "sys/syscall.h"
+#include "include/ascii_font.h"
 
 /* 这个函数应该是放在外部中断的处理函数里的，
    外部申请加载一个程序的时候调用，
@@ -16,7 +16,8 @@ void __main()
 
 
   // 示意程序到了这里
-  LCD_ClearScr( 0x909090 );
+  LCD_ClearScr( 0x00000000 );
+  LCD_PrintChar(0xFFFFFFFF, ASCII_I);
 
   
   // 进程管理器的安装与初始化    

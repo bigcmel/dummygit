@@ -36,6 +36,7 @@ extern void LCD_Init();
 extern void LCD_EnvidOnOff(int onoff);
 extern void LCD_PutPixel(WORD x, WORD y, WORD color);
 extern void LCD_ClearScr(WORD color);
+extern void LCD_PrintChar(WORD color, BYTE ch[]);
 
 
 #endif

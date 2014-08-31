@@ -108,6 +108,13 @@ void LCD_PutPixel(WORD x, WORD y, WORD color)
     LCD_BUFFER[x][y] = color;
 }
 
+
+#define LCD_SCR_CH_WIDTH 40 // 一个屏幕在 X 方向能容纳的字符数
+#define LCD_SCR_CH_HEIGHT 15 // 一个屏幕在 Y 方向能容纳的字符数
+
+// 记录下一个字符的横纵坐标
+HWORD LCD_CH_X_PTR, LCD_CH_Y_PTR;
+
 /* Function: 用参数 color 代表的颜色清屏 */
 
 void LCD_ClearScr(WORD color)
@@ -117,4 +124,57 @@ void LCD_ClearScr(WORD color)
   for(y=0 ; y<SCR_LCD_LINE ; y++)
     for(x=0 ; x<SCR_LCD_HOZ ; x++)
       LCD_BUFFER[x][y] = color;
+
+  LCD_CH_X_PTR = 0;
+  LCD_CH_Y_PTR = 0;
 }
+
+/* Function: 打印一个大小为 8*16 的字符到屏幕上，
+   一个屏幕可以被分割成 40*15 个矩形格子，每个格子恰好放一个字符，
+   ch_x 就是该字符在二维格子空间的横坐标，最小值0，最大值39
+   ch_y 则是纵坐标，最小值0，最大值14 */
+
+void LCD_PrintChar_XY(WORD ch_x, WORD ch_y, WORD color, BYTE ch[])
+{
+  const HWORD ch_pixel_width = 8;
+  const HWORD ch_pixel_height = 16;
+
+  HWORD i, j;
+  BYTE mask, tmp;
+
+
+  // 得到像素的横纵坐标
+  ch_x *= ch_pixel_width;
+  ch_y *= ch_pixel_height;
+
+  for(i=0; i<ch_pixel_height; i++)
+    {
+      mask = 0x80;
+      tmp = ch[i];
+      for(j=0; j<ch_pixel_width; j++)
+	{
+	  if(tmp & mask)
+	    {
+	      LCD_PutPixel(ch_x+j, ch_y+i, color);
+	    }
+	  mask = mask >> 1;
+	}
+    }
+
+}
+
+void LCD_PrintChar(WORD color, BYTE ch[])
+{
+  LCD_PrintChar_XY(LCD_CH_X_PTR, LCD_CH_Y_PTR, color, ch);
+
+  LCD_CH_X_PTR++;
+  LCD_CH_Y_PTR++;
+
+  if(LCD_CH_X_PTR >= LCD_SCR_CH_WIDTH)
+    LCD_CH_X_PTR = 0;
+
+  if(LCD_CH_Y_PTR >= LCD_SCR_CH_HEIGHT)
+    LCD_CH_Y_PTR = 0;
+
+}
+
